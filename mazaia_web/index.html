@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مزايا التعليم — النشرة الشهرية</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:#152b43;font-family:"Tahoma","Arial",sans-serif;color:#fff;overflow:hidden}
+.app{height:100%;display:flex;flex-direction:column;background:radial-gradient(circle at 50% 40%,#294967 0,#152b43 62%,#0d1d2d 100%)}
+.top{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #48627a;background:rgba(9,25,40,.7);backdrop-filter:blur(8px)}
+.brand{font-size:20px;font-weight:700}.sub{font-size:12px;color:#b9c9d7;margin-top:3px}
+.controls{display:flex;align-items:center;gap:8px}.btn{border:1px solid #60778c;background:#233e56;color:#fff;border-radius:10px;padding:9px 13px;cursor:pointer;font-size:14px}.btn:hover{background:#2e4d67}.btn:disabled{opacity:.35;cursor:not-allowed}
+.viewer{flex:1;display:flex;align-items:center;justify-content:center;position:relative;padding:22px 50px 60px;perspective:1800px}
+.book{position:relative;width:min(92vw,1180px);height:min(82vh,800px);filter:drop-shadow(0 24px 30px rgba(0,0,0,.35));}
+.sheet{position:absolute;inset:0;transform-origin:right center;transform-style:preserve-3d;transition:transform .72s cubic-bezier(.2,.7,.15,1);background:#fff;border-radius:4px 10px 10px 4px;box-shadow:0 2px 8px rgba(0,0,0,.25);overflow:hidden}
+.sheet.turned{transform:rotateY(-180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:#fff}.back{transform:rotateY(180deg)}
+.face img{width:100%;height:100%;object-fit:contain;display:block;background:#f8f8f8}
+.page-shadow{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.06),transparent 12%,transparent 88%,rgba(0,0,0,.09));z-index:3}
+.hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);color:#aebdca;font-size:12px;text-align:center}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:1px solid #62798e;background:#203c54;color:#fff;font-size:24px;cursor:pointer;z-index:20}.nav:hover{background:#2c526e}.prev{right:10px}.next{left:10px}
+.bottom{height:48px;display:flex;align-items:center;justify-content:center;gap:16px;color:#c5d1db;font-size:13px;border-top:1px solid #48627a;background:rgba(9,25,40,.72)}
+.mobile-page{display:none}.progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:#294258}.progress i{display:block;height:100%;background:#d9b12d;width:1%}
+#thumbs{display:none;position:absolute;right:18px;top:80px;bottom:55px;width:180px;overflow:auto;background:rgba(8,22,35,.96);padding:10px;border:1px solid #4b6479;border-radius:12px;z-index:50}.thumb{margin-bottom:8px;border:2px solid transparent;cursor:pointer}.thumb.active{border-color:#d9b12d}.thumb img{display:block;width:100%}
+@media(max-width:700px){
+html,body{overflow:hidden;background:#0b1826;touch-action:pan-y}
+.app{background:#0b1826}
+.top{height:56px;padding:0 10px;flex:0 0 56px}
+.brand{font-size:17px}.sub{display:none}
+.controls{gap:5px}.controls .btn{padding:7px 8px;border-radius:8px;font-size:12px}
+#thumbBtn{display:none}
+.viewer{padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;background:#101f2e}
+.book{display:none}
+.mobile-page{display:flex;width:100%;height:100%;align-items:center;justify-content:center;overflow:hidden;background:#fff;position:relative;box-shadow:0 0 25px rgba(0,0,0,.3)}
+.mobile-page img{display:block;width:100%;height:100%;object-fit:contain;background:#fff;user-select:none;-webkit-user-drag:none}
+.nav{width:38px;height:38px;line-height:34px;top:auto;bottom:58px;transform:none;background:rgba(17,43,64,.88);border-color:#7890a3;font-size:19px;z-index:30}
+.prev{right:12px}.next{left:12px}
+.hint{bottom:8px;font-size:10px;z-index:20;background:rgba(9,25,40,.68);padding:4px 9px;border-radius:12px;color:#d4dce3}
+.bottom{height:42px;flex:0 0 42px;font-size:12px;gap:8px}
+.bottom span:last-child{display:none}
+.progress{bottom:0;height:3px;z-index:40}
+#thumbs{right:6px;top:62px;bottom:50px;width:145px;border-radius:10px}
+}
+</style></head>
+<body>
+<div class="app">
+<header class="top"><div><div class="brand">مزايا التعليم</div><div class="sub">النشرة الشهرية — أكتوبر 2026</div></div><div class="controls"><button class="btn" id="thumbBtn">الفهرس</button><button class="btn" id="zoomBtn">تكبير</button><button class="btn" id="fsBtn">ملء الشاشة</button></div></header>
+<main class="viewer" id="viewer">
+<button class="nav prev" id="prev" aria-label="السابق">›</button>
+<div class="book" id="book"></div><div class="mobile-page" id="mobilePage"><img id="mobileImg" src="pages/001.jpg" alt="صفحة 1"></div>
+<button class="nav next" id="next" aria-label="التالي">‹</button>
+<div class="hint">استخدم الأسهم أو انقر على طرف الصفحة — ويمكن السحب على الجوال</div>
+<div class="progress"><i id="bar"></i></div>
+<div id="thumbs"></div>
+</main>
+<footer class="bottom"><span id="counter">صفحة 1 من 94</span><span>•</span><span>← السابق &nbsp; | &nbsp; التالي →</span></footer>
+</div>
+<script>
+const total=94, book=document.getElementById('book'), counter=document.getElementById('counter'), bar=document.getElementById('bar');
+let current=0, zoomed=false, mobileZoom=false;
+const mobileImg=document.getElementById('mobileImg');
+const sheets=[];
+for(let i=0;i<Math.ceil(total/2);i++){
+  const s=document.createElement('div'); s.className='sheet'; s.style.zIndex=100-i;
+  const f=document.createElement('div'); f.className='face front';
+  const b=document.createElement('div'); b.className='face back';
+  const n1=i*2+1, n2=i*2+2;
+  f.innerHTML=`<img loading="eager" src="pages/${String(n1).padStart(3,'0')}.jpg" alt="صفحة ${n1}">`;
+  b.innerHTML=n2<=total?`<img loading="eager" src="pages/${String(n2).padStart(3,'0')}.jpg" alt="صفحة ${n2}">`:'';
+  s.append(f,b); book.appendChild(s); sheets.push(s);
+}
+function render(){
+  const sheetIndex=Math.floor(current/2);
+  sheets.forEach((s,i)=>s.classList.toggle('turned',i<sheetIndex));
+  // if current is even, show front of sheet; if odd, show back via an instantaneous overlay trick
+  if(current%2===1){
+    sheets[sheetIndex].classList.add('turned');
+    // keep this sheet visible on its back by raising it above prior sheets
+    sheets[sheetIndex].style.zIndex=200;
+    sheets[sheetIndex].style.transform='rotateY(-180deg)';
+    for(let i=sheetIndex+1;i<sheets.length;i++) sheets[i].style.zIndex=100-i;
+  } else {
+    sheets.forEach((s,i)=>{s.style.transform=''; if(i!==sheetIndex)s.style.zIndex=100-i;});
+  }
+  // Rebuild using a simpler two-step page state: each click advances one page and the nearest sheet flips.
+  counter.textContent=`صفحة ${current+1} من ${total}`;
+  bar.style.width=((current+1)/total*100)+'%';
+}
+function go(n){current=Math.max(0,Math.min(total-1,n));
+  const idx=Math.floor(current/2);
+  sheets.forEach((s,i)=>{s.classList.remove('turned');s.style.transform='';s.style.zIndex=100-i;});
+  if(current%2===1){sheets[idx].style.transform='rotateY(-180deg)'; sheets[idx].style.zIndex=200;}
+  for(let i=0;i<idx;i++){sheets[i].style.transform='rotateY(-180deg)';sheets[i].style.zIndex=10-i;}
+  mobileImg.src=`pages/${String(current+1).padStart(3,'0')}.jpg`;
+  mobileImg.alt=`صفحة ${current+1}`;
+  counter.textContent=`صفحة ${current+1} من ${total}`;
+  bar.style.width=((current+1)/total*100)+'%';
+}
+document.getElementById('next').onclick=()=>go(current+1);
+document.getElementById('prev').onclick=()=>go(current-1);
+document.addEventListener('keydown',e=>{if(['ArrowLeft','PageDown',' '].includes(e.key))go(current+1); if(['ArrowRight','PageUp'].includes(e.key))go(current-1); if(e.key==='Home')go(0);if(e.key==='End')go(total-1);});
+document.getElementById('fsBtn').onclick=()=>document.documentElement.requestFullscreen?.();
+document.getElementById('zoomBtn').onclick=()=>{zoomed=!zoomed;book.style.transform=zoomed?'scale(1.18)':'scale(1)';document.getElementById('zoomBtn').textContent=zoomed?'تصغير':'تكبير';};
+const thumbs=document.getElementById('thumbs');
+for(let i=1;i<=total;i++){const d=document.createElement('div');d.className='thumb';d.innerHTML=`<img loading="lazy" src="pages/${String(i).padStart(3,'0')}.jpg" alt="${i}">`;d.onclick=()=>{go(i-1);thumbs.style.display='none'};thumbs.appendChild(d)}
+document.getElementById('thumbBtn').onclick=()=>thumbs.style.display=thumbs.style.display==='block'?'none':'block';
+let sx=0, sy=0, lastTap=0;
+viewer.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX;sy=e.changedTouches[0].clientY},{passive:true});
+viewer.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy; if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)) {go(current+(dx<0?1:-1)); return;} const now=Date.now(); if(now-lastTap<320){mobileZoom=!mobileZoom;mobileImg.style.transform=mobileZoom?'scale(1.7)':'scale(1)';mobileImg.style.transition='transform .2s';} lastTap=now;},{passive:true});
+viewer.addEventListener('click',e=>{if(e.target.closest('button')||e.target.closest('#thumbs'))return;const r=book.getBoundingClientRect();const x=e.clientX-r.left;go(current+(x<r.width/2?1:-1));});
+go(0);
+</script></body></html>
